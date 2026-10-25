@@ -1,0 +1,95 @@
+@use '../abstracts/functions' as *;
+@use '../abstracts/mixins' as *;
+
+.btn {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	gap: rem(12);
+	height: rem(50);
+	padding: 0 rem(26);
+	border: 1px solid rgba(var(--fg-rgb), .55);
+	font-size: rem(13);
+	letter-spacing: .02em;
+	color: var(--fg);
+	white-space: nowrap;
+	transition: color .45s, border-color .45s, opacity .45s, box-shadow .6s;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: var(--fg);
+		transform: translateY(101%);
+		transition: transform .55s var(--ease);
+	}
+
+	svg {
+		display: block;
+		width: rem(16);
+		height: rem(16);
+	}
+
+	&__lock,
+	&__arrow {
+		display: block;
+	}
+
+	&__lock {
+		display: none;
+	}
+
+	&[disabled] {
+		border-color: var(--line);
+		color: var(--muted);
+		cursor: not-allowed;
+	}
+
+	&[disabled] &__lock {
+		display: block;
+	}
+
+	&[disabled] &__arrow {
+		display: none;
+	}
+
+	@include pointer {
+		color: var(--inv);
+		border-color: var(--fg);
+
+		&::before {
+			transform: none;
+		}
+	}
+
+	&--solid {
+		background: var(--fg);
+		border-color: var(--fg);
+		color: var(--inv);
+
+		&::before {
+			background: var(--accent);
+		}
+
+		@include pointer {
+			color: #fff;
+			border-color: var(--accent);
+		}
+	}
+
+	&--ghost {
+		border-color: var(--line);
+	}
+
+	// на телефоне все кнопки одной высоты и на всю ширину — без «плавающих» размеров от длины текста
+	@media (max-width: 900px) {
+		width: 100%;
+		height: 3rem;
+		padding: 0 1.25rem;
+		justify-content: center;
+		font-size: .875rem;
+	}
+}

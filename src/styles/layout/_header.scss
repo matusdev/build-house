@@ -1,0 +1,240 @@
+@use '../abstracts/functions' as *;
+@use '../abstracts/mixins' as *;
+
+.header {
+	position: fixed;
+	z-index: 30;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: var(--header-h);
+	padding: 0 var(--pad);
+	display: flex;
+	align-items: center;
+	color: var(--fg);
+	opacity: 0;
+	transform: translateY(-1rem);
+	transition: color .6s, opacity .8s var(--ease), transform .8s var(--ease);
+	pointer-events: none;
+
+	> * {
+		pointer-events: auto;
+	}
+
+	.is-ready & {
+		opacity: 1;
+		transform: none;
+	}
+
+	// над футером шапка уезжает, чтобы не перекрывать контент
+	.is-ready.is-footer:not(.is-menu) & {
+		opacity: 0;
+		transform: translateY(-100%);
+
+		> * {
+			pointer-events: none;
+		}
+	}
+
+	// меню всегда тёмное — шапке нужны светлые цвета, а не цвета текущего экрана
+	.is-menu & {
+		color: #f1eee8;
+		--fg: #f1eee8;
+		--fg-rgb: 241, 238, 232;
+		--muted: rgba(241, 238, 232, .5);
+		--line: rgba(241, 238, 232, .16);
+		--inv: #121211;
+	}
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	gap: rem(12);
+
+	svg {
+		flex-shrink: 0;
+		width: rem(18);
+		height: rem(18);
+	}
+
+	&__text {
+		font-size: rem(12);
+		letter-spacing: .34em;
+		font-weight: 500;
+	}
+}
+
+// навигация по шагам: пункт «раскрывается» по ширине и выезжает снизу, когда шаг становится доступен
+.crumbs {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	transition: opacity .4s;
+
+	@media (max-width: 1100px) {
+		display: none;
+	}
+
+	.is-menu & {
+		opacity: 0;
+		pointer-events: none;
+	}
+}
+
+.crumb {
+	display: grid;
+	grid-template-columns: 0fr;
+	margin-left: 0;
+	font-size: rem(13);
+	color: var(--muted);
+	opacity: 0;
+	pointer-events: none;
+	transition: grid-template-columns 1s var(--ease), margin-left 1s var(--ease), opacity .6s, color .4s;
+
+	&.is-open {
+		grid-template-columns: 1fr;
+		margin-left: rem(26);
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	&:first-child.is-open {
+		margin-left: 0;
+	}
+
+	&__w {
+		display: block;
+		min-width: 0;
+		overflow: hidden;
+		padding: rem(4) 0;
+	}
+
+	&__t {
+		display: inline-flex;
+		align-items: center;
+		gap: rem(8);
+		white-space: nowrap;
+		transform: translateY(115%);
+		transition: transform 1s var(--ease) .2s;
+
+		&::before {
+			content: '';
+			width: rem(5);
+			height: rem(5);
+			border-radius: 50%;
+			background: currentColor;
+			opacity: .45;
+			transform: scale(0);
+			transition: transform .4s var(--ease), background-color .4s, opacity .4s;
+		}
+	}
+
+	&.is-open &__t {
+		transform: none;
+	}
+
+	&.is-done &__t::before {
+		transform: scale(1);
+	}
+
+	&.is-current {
+		color: var(--fg);
+	}
+
+	&.is-current &__t::before {
+		background: var(--accent);
+		opacity: 1;
+		transform: scale(1.3);
+	}
+
+	@include pointer {
+		color: var(--fg);
+	}
+}
+
+.langs {
+	display: flex;
+	gap: 2px;
+	padding: 3px;
+	border: 1px solid var(--line);
+	border-radius: 99px;
+	transition: border-color .6s;
+
+	&--header {
+		margin-left: rem(32);
+		transition: opacity .4s, border-color .6s;
+
+		// в открытом меню есть свой переключатель языка, навигация по шагам — тоже в меню
+		.is-menu & {
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		@media (max-width: 1100px) {
+			margin-left: auto;
+		}
+
+		@media (max-width: 900px) {
+			display: none;
+		}
+	}
+
+	&__btn {
+		min-width: rem(34);
+		height: rem(26);
+		padding: 0 rem(6);
+		border-radius: 99px;
+		font-size: rem(11);
+		letter-spacing: .1em;
+		color: var(--muted);
+		transition: color .3s, background-color .3s;
+
+		&.is-active {
+			background: var(--fg);
+			color: var(--inv);
+		}
+
+		@media (pointer: fine) {
+			&:not(.is-active):hover {
+				color: var(--fg);
+			}
+		}
+	}
+}
+
+.burger {
+	margin-left: rem(16);
+	width: rem(42);
+	height: rem(42);
+	border-radius: 50%;
+	border: 1px solid var(--line);
+	display: grid;
+	place-content: center;
+	gap: 4px;
+	transition: border-color .4s;
+
+	span {
+		display: block;
+		width: rem(14);
+		height: 1px;
+		background: currentColor;
+		transition: transform .45s var(--ease);
+	}
+
+	@include pointer {
+		border-color: currentColor;
+	}
+
+	.is-menu & span:first-child {
+		transform: translateY(2.5px) rotate(45deg);
+	}
+
+	.is-menu & span:last-child {
+		transform: translateY(-2.5px) rotate(-45deg);
+	}
+
+	@media (max-width: 900px) {
+		margin-left: auto;
+	}
+}

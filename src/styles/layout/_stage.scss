@@ -1,0 +1,227 @@
+@use '../abstracts/functions' as *;
+
+.scene {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+
+	@media (max-width: 900px) {
+		z-index: 4;
+	}
+}
+
+// задаёт размер «окна» сцены — JS читает его прямоугольник
+.stage-probe {
+	position: fixed;
+	top: var(--header-h);
+	bottom: var(--hud-h);
+	left: var(--stage-l);
+	right: var(--stage-gap);
+	border-radius: rem(22);
+	visibility: hidden;
+	pointer-events: none;
+
+	@media (max-width: 900px) {
+		left: var(--stage-gap);
+		bottom: auto;
+		height: var(--stage-h);
+		border-radius: 1.1rem;
+	}
+}
+
+// над слоем секций (z 3), чтобы кнопки масштаба нажимались; сама рамка клики пропускает
+.stage {
+	position: fixed;
+	z-index: 4;
+	border: 1px solid var(--line);
+	pointer-events: none;
+	transition: border-color .5s;
+
+	@media (max-width: 900px) {
+		z-index: 5;
+	}
+
+	// подписи на подложке — читаются, даже если дом заходит под них
+	&__label {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		gap: rem(3);
+		padding: rem(7) rem(10);
+		border-radius: rem(10);
+		background: rgba(var(--fg-rgb), .06);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		font-size: rem(12);
+		color: var(--muted);
+		transition: color .6s, background-color .6s;
+
+		&--tl {
+			top: rem(14);
+			left: rem(16);
+		}
+
+		&--br {
+			bottom: rem(14);
+			right: rem(16);
+		}
+	}
+
+	&__compass {
+		position: absolute;
+		top: rem(20);
+		right: rem(24);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		font-size: rem(10);
+		color: var(--muted);
+
+		svg {
+			width: rem(26);
+			height: rem(26);
+		}
+	}
+
+	&__drop {
+		position: absolute;
+		left: 50%;
+		bottom: rem(28);
+		display: flex;
+		align-items: center;
+		gap: rem(10);
+		padding: rem(10) rem(18) rem(10) rem(14);
+		border-radius: 99px;
+		background: var(--fg);
+		color: var(--inv);
+		font-size: rem(13);
+		white-space: nowrap;
+		opacity: 0;
+		transform: translate(-50%, 1rem);
+		transition: opacity .4s, transform .5s var(--ease);
+
+		svg {
+			width: rem(18);
+			height: rem(18);
+		}
+	}
+
+	&__zoom {
+		position: absolute;
+		left: rem(16);
+		bottom: rem(14);
+		display: flex;
+		gap: 2px;
+		padding: 3px;
+		border-radius: 99px;
+		background: rgba(var(--fg-rgb), .06);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		pointer-events: auto;
+		transition: background-color .6s;
+	}
+
+	&__zoom-btn {
+		width: rem(32);
+		height: rem(32);
+		display: grid;
+		place-items: center;
+		border-radius: 50%;
+		color: var(--fg);
+		transition: background-color .3s, opacity .3s, color .6s;
+
+		svg {
+			width: rem(15);
+			height: rem(15);
+		}
+
+		&:disabled {
+			opacity: .3;
+			cursor: default;
+		}
+
+		@media (pointer: fine) {
+			&:not(:disabled):hover {
+				background: rgba(var(--fg-rgb), .1);
+			}
+		}
+	}
+
+	// на телефоне «окно» маленькое — подписи и компас убраны, чтобы не спорить с домом
+	@media (max-width: 900px) {
+		&__label,
+		&__compass {
+			display: none;
+		}
+
+		&__zoom {
+			left: auto;
+			right: .6rem;
+			bottom: .6rem;
+		}
+
+		&__zoom-btn {
+			width: 2.1rem;
+			height: 2.1rem;
+		}
+	}
+}
+
+.is-dragging {
+	.stage {
+		border-style: dashed;
+		border-color: rgba(var(--fg-rgb), .45);
+	}
+
+	.stage__drop {
+		opacity: .55;
+		transform: translate(-50%, 0);
+	}
+
+	.opt {
+		cursor: grabbing;
+	}
+}
+
+.is-drop-ok {
+	.stage {
+		border-color: var(--accent);
+	}
+
+	.stage__drop {
+		opacity: 1;
+	}
+}
+
+.fly-ghost {
+	position: fixed;
+	z-index: 40;
+	object-fit: contain;
+	pointer-events: none;
+}
+
+.drag-ghost {
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 40;
+	width: rem(120);
+	height: rem(120);
+	border-radius: 50%;
+	border: 1px solid var(--line);
+	background: rgba(var(--fg-rgb), .07);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	pointer-events: none;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+}

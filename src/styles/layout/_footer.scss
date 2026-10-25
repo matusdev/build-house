@@ -1,0 +1,431 @@
+@use '../abstracts/functions' as *;
+@use '../abstracts/mixins' as *;
+
+// компактный футер: заявка + «паспорт» собранного дома, линия Карпат, нижняя строка
+.footer {
+	position: relative;
+	z-index: 6;
+	padding: rem(80) var(--pad) rem(24);
+	background: #0e0e0d;
+	color: #f1eee8;
+	border-top: 1px solid rgba(241, 238, 232, .08);
+	box-shadow: 0 rem(-30) rem(80) rgba(0, 0, 0, .35);
+	--fg: #f1eee8;
+	--fg-rgb: 241, 238, 232;
+	--muted: rgba(241, 238, 232, .5);
+	--line: rgba(241, 238, 232, .12);
+	--inv: #0e0e0d;
+
+	@media (max-width: 900px) {
+		z-index: 7;
+		padding-top: 3.5rem;
+	}
+
+	&__main {
+		margin-bottom: rem(72);
+		display: grid;
+		grid-template-columns: 1.08fr .92fr;
+		gap: rem(72);
+		align-items: start;
+
+		@media (max-width: 900px) {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+			margin-bottom: 2.5rem;
+		}
+	}
+
+	&__title {
+		margin: rem(16) 0 rem(18);
+		font-size: rem(60);
+		line-height: 1;
+		font-weight: 300;
+		letter-spacing: -.035em;
+
+		@media (max-width: 900px) {
+			font-size: 2.4rem;
+		}
+	}
+
+	&__lead {
+		max-width: rem(460);
+		margin: 0;
+		font-size: rem(15);
+		line-height: 1.6;
+		color: var(--muted);
+		opacity: 0;
+		transition: opacity .5s;
+
+		.footer.is-in & {
+			opacity: 1;
+			transition: opacity 1s var(--ease) .5s;
+		}
+	}
+
+	&__form {
+		display: grid;
+		grid-template-columns: 1fr 1fr auto;
+		align-items: end;
+		gap: rem(22);
+		margin-top: rem(34);
+
+		@media (max-width: 900px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__send {
+		display: flex;
+		align-items: center;
+		gap: rem(14);
+		height: rem(54);
+		padding: 0 rem(5) 0 rem(24);
+		border-radius: 99px;
+		background: var(--fg);
+		color: var(--inv);
+		font-size: rem(14);
+		font-weight: 400;
+		white-space: nowrap;
+		transition: background-color .4s, opacity .4s;
+
+		&-circle {
+			width: rem(44);
+			height: rem(44);
+			display: grid;
+			place-items: center;
+			border-radius: 50%;
+			background: var(--inv);
+			color: var(--fg);
+			transition: transform .6s var(--ease), background-color .4s;
+
+			svg {
+				width: rem(16);
+				height: rem(16);
+			}
+		}
+
+		@include pointer {
+			background: #fff;
+
+			.footer__send-circle {
+				transform: rotate(-45deg);
+				background: var(--accent);
+			}
+		}
+
+		@media (max-width: 900px) {
+			justify-content: space-between;
+			height: 3rem;
+			padding-left: 1.25rem;
+
+			&-circle {
+				width: 2.4rem;
+				height: 2.4rem;
+			}
+		}
+	}
+
+	&__note {
+		margin: rem(14) 0 0;
+		font-size: rem(11);
+		color: var(--muted);
+	}
+
+	&__thanks {
+		display: none;
+		margin: rem(10) 0 0;
+		font-size: rem(15);
+		color: var(--accent);
+	}
+
+	.is-sent ~ &__thanks {
+		display: block;
+	}
+
+	.is-sent &__send {
+		opacity: .4;
+		pointer-events: none;
+	}
+
+	&__bar {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: rem(14) rem(32);
+		padding-top: rem(20);
+		border-top: 1px solid var(--line);
+		font-size: rem(12);
+		color: var(--muted);
+
+		.logo {
+			color: var(--fg);
+		}
+
+		a {
+			transition: color .3s;
+
+			@include pointer {
+				color: var(--fg);
+			}
+		}
+	}
+
+	&__contacts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: rem(8) rem(26);
+		margin-left: auto;
+
+		a {
+			color: var(--fg);
+		}
+	}
+
+	&__clock {
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__legal {
+		display: flex;
+		gap: rem(18);
+	}
+
+	&__top {
+		display: flex;
+		align-items: center;
+		gap: rem(8);
+		color: var(--fg);
+
+		svg {
+			width: rem(14);
+			height: rem(14);
+			transition: transform .5s var(--ease);
+		}
+
+		@include pointer {
+			svg {
+				transform: translateY(-3px);
+			}
+		}
+	}
+
+	@media (max-width: 900px) {
+		&__contacts {
+			margin-left: 0;
+			width: 100%;
+		}
+	}
+}
+
+/* ---------- паспорт дома ---------- */
+
+.passport {
+	padding: rem(18);
+	border: 1px solid var(--line);
+	border-radius: rem(18);
+	background: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .01));
+	opacity: 0;
+	transform: translateY(rem(24));
+	transition: opacity .5s, transform .5s;
+
+	.footer.is-in & {
+		opacity: 1;
+		transform: none;
+		transition: opacity 1s var(--ease) .35s, transform 1.2s var(--ease) .35s;
+	}
+
+	&__head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: rem(14);
+	}
+
+	&__id {
+		font-size: rem(11);
+		letter-spacing: .14em;
+		color: var(--muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__body {
+		display: grid;
+		grid-template-columns: 1.1fr 1fr;
+		gap: rem(18);
+		align-items: center;
+
+		@media (max-width: 600px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__img {
+		position: relative;
+		aspect-ratio: 3 / 2;
+		overflow: hidden;
+		border-radius: rem(10);
+		background: radial-gradient(circle at 50% 60%, #2a2b24, #161615);
+
+		img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transform: scale(1.06);
+			transition: transform 1.6s var(--ease);
+		}
+
+		img:not([src]) {
+			visibility: hidden;
+		}
+
+		.footer.is-in & img {
+			transform: none;
+		}
+	}
+
+	&__specs {
+		display: grid;
+		gap: rem(7);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: rem(12);
+
+		li {
+			display: flex;
+			justify-content: space-between;
+			gap: rem(10);
+			padding-bottom: rem(6);
+			border-bottom: 1px dashed rgba(241, 238, 232, .1);
+		}
+
+		span {
+			color: var(--muted);
+		}
+
+		b {
+			font-weight: 400;
+			text-align: right;
+		}
+	}
+
+	&__foot {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: rem(16);
+		margin-top: rem(16);
+		padding-top: rem(14);
+		border-top: 1px solid var(--line);
+	}
+
+	// телефон: широкий кадр, под ним комплектация в две колонки, итог отдельной строкой
+	@media (max-width: 600px) {
+		padding: .9rem;
+
+		&__body {
+			gap: .9rem;
+		}
+
+		&__img {
+			aspect-ratio: 16 / 10;
+		}
+
+		&__specs {
+			grid-template-columns: 1fr 1fr;
+			gap: .55rem 1rem;
+
+			li {
+				flex-direction: column;
+				gap: .1rem;
+				padding: 0;
+				border: 0;
+			}
+
+			span {
+				font-size: .68rem;
+			}
+
+			b {
+				text-align: left;
+			}
+		}
+
+		&__foot {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: .3rem;
+		}
+
+		&__sum {
+			font-size: 1.5rem;
+		}
+	}
+
+	&__note {
+		font-size: rem(11);
+		color: var(--muted);
+	}
+
+	&__sum {
+		font-size: rem(24);
+		font-weight: 300;
+		letter-spacing: -.01em;
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+/* ---------- поля формы ---------- */
+
+.field {
+	position: relative;
+	display: block;
+	border-bottom: 1px solid var(--line);
+
+	input {
+		width: 100%;
+		padding: rem(26) 0 rem(10);
+		border: 0;
+		background: none;
+		font-size: rem(17);
+		color: var(--fg);
+		outline: none;
+	}
+
+	&__label {
+		position: absolute;
+		left: 0;
+		top: rem(24);
+		font-size: rem(15);
+		color: var(--muted);
+		pointer-events: none;
+		transition: top .35s var(--ease), font-size .35s var(--ease), letter-spacing .35s;
+	}
+
+	input:focus + &__label,
+	input:not(:placeholder-shown) + &__label {
+		top: rem(2);
+		font-size: rem(11);
+		letter-spacing: .12em;
+		text-transform: uppercase;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background: var(--fg);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform .6s var(--ease);
+	}
+
+	&:focus-within::after {
+		transform: scaleX(1);
+	}
+}

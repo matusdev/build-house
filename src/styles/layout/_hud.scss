@@ -1,0 +1,143 @@
+@use '../abstracts/functions' as *;
+@use '../abstracts/mixins' as *;
+
+.hud {
+	position: fixed;
+	z-index: 25;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: var(--hud-h);
+	padding: 0 var(--pad);
+	display: flex;
+	align-items: center;
+	color: var(--fg);
+	transition: opacity .6s, transform .6s var(--ease), color .6s;
+	pointer-events: none;
+
+	> * {
+		pointer-events: auto;
+	}
+
+	html:not(.is-ready) &,
+	html[data-active='0'] &,
+	html[data-active='7'] & {
+		opacity: 0;
+		transform: translateY(1rem);
+
+		> * {
+			pointer-events: none;
+		}
+	}
+
+	&__left {
+		display: flex;
+		align-items: center;
+		gap: rem(32);
+		width: var(--text-w);
+	}
+
+	&__count {
+		display: flex;
+		align-items: center;
+		gap: rem(14);
+		font-size: rem(13);
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__num {
+		display: inline-block;
+
+		&.is-roll {
+			animation: roll .7s var(--ease);
+		}
+	}
+
+	&__line {
+		width: rem(56);
+		height: 1px;
+		background: var(--line);
+	}
+
+	&__of {
+		color: var(--muted);
+	}
+
+	&__arrows {
+		display: flex;
+		gap: rem(8);
+	}
+
+	&__arrow {
+		width: rem(38);
+		height: rem(38);
+		display: grid;
+		place-items: center;
+		border: 1px solid var(--line);
+		border-radius: 50%;
+		transition: border-color .4s, opacity .4s;
+
+		svg {
+			width: rem(16);
+			height: rem(16);
+		}
+
+		&[disabled] {
+			opacity: .3;
+			cursor: default;
+		}
+
+		@include pointer {
+			border-color: var(--fg);
+		}
+	}
+
+	&__price {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: rem(3);
+		min-width: rem(200);
+		margin-left: auto;
+		opacity: 0;
+		transition: opacity .6s;
+
+		.has-price & {
+			opacity: 1;
+		}
+	}
+
+	&__sum {
+		font-size: rem(18);
+		font-variant-numeric: tabular-nums;
+	}
+
+	@media (max-width: 900px) {
+		// фон как у страницы — контент секции не просвечивает под панелью
+		background: inherit;
+		border-top: 1px solid var(--line);
+
+		&__arrows {
+			display: none;
+		}
+
+		&__left {
+			width: auto;
+		}
+
+		&__price {
+			min-width: 0;
+		}
+
+		&__sum {
+			font-size: 1rem;
+		}
+	}
+}
+
+@keyframes roll {
+	from {
+		opacity: 0;
+		transform: translateY(70%);
+	}
+}
